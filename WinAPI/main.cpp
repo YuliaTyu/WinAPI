@@ -1,6 +1,8 @@
 ﻿#include<Windows.h>
 #include"resource.h"//у каждого окна есть процедура окна(это обычная функция, кот неявно вызывается при запуске окна)
 
+const char g_sz_LOGIN_INVITE[] = "Введите имя пользователя";
+
 //любая процедура окна всегда принимает 4 параметра :
 //1 окно
 //2 сообщение
@@ -28,7 +30,7 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	//функция SendMessage - так же принимает 4 параметра
 	//1) hwnd - окно
 	//2) uMsg - сообщение
-	//3) wParam - параметры сообщения
+	//3) wParam - параметр сообщения
 	//4) lParam - параметр сообщения
 	switch (uMsg)
 	{
@@ -38,11 +40,31 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		//SetFocus(hEditLogin);      //при запуске окна мигает курсор в нашем окне
 		HICON hIcon = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_ICON1));// сайт icon-icons.com - выбрать иконку
 		SendMessage(hwnd, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
+		SendMessage(hEditLogin, WM_SETTEXT, 0, (LPARAM)g_sz_LOGIN_INVITE);
 	}
 	break;
 	case WM_COMMAND:		         //обрабатывает команды с клавиатуры и мыши
-		switch (LOWORD(wParam))
+		switch (LOWORD(wParam))//взяли младшее слово
 		{
+		case IDC_EDIT_LOGIN:
+		{
+			HWND hEditLogin = GetDlgItem(hwnd, IDC_EDIT_LOGIN);//получаем дескриптор поля Login
+			CONST INT SIZE = 256;
+			CHAR sz_buffer[SIZE] = {};
+			SendMessage(hEditLogin, WM_GETTEXT, SIZE, (LPARAM)sz_buffer);
+			if (HIWORD(wParam) == EN_SETFOCUS)
+			{
+				if (strcmp(sz_buffer, g_sz_LOGIN_INVITE) == 0)
+					SendMessage(hEditLogin, WM_SETTEXT, 0, (LPARAM)"");
+			}
+			if (HIWORD(wParam) == EN_KILLFOCUS)
+			{
+				if (strcmp(sz_buffer, "") == 0)
+					SendMessage(hEditLogin, WM_SETTEXT, 0, (LPARAM)g_sz_LOGIN_INVITE);
+			}
+
+		}
+		break;
 		case IDC_BUTTON_COPY:
 		{   //объявили переменные в одной области видимости:{ ...... }
 			CONST INT SIZE = 256;//объявили обычную строку 
