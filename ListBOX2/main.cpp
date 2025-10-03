@@ -113,11 +113,8 @@ BOOL CALLBACK DlgProcEdit(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_COMMAND:
 	{
-		switch (LOWORD(wParam)
-		{
+		//switch (LOWORD(wParam)
 		
-			break;
-		}
 	}
 		break;
 	case WM_CLOSE:
