@@ -73,13 +73,89 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	switch (uMsg)
 	{
 	case WM_CREATE:
+	{
+		HWND hStatic = CreateWindowEx
+		(
+			NULL,
+			"Static",
+			"Этот статик текс создан при помощи функции CreateWindowEx ",
+			WS_CHILD|WS_VISIBLE,
+			10, 10,
+			500, 25,
+			hwnd,
+			(HMENU)1000,
+			GetModuleHandle(NULL),
+			NULL
+		);
+		HWND hEdit = CreateWindowEx
+		(
+			NULL,
+			"Edit",
+			"",
+			WS_CHILD|WS_VISIBLE | WS_BORDER,
+			10,45,
+			500,22,
+			hwnd,
+			(HMENU)1001,
+			GetModuleHandle(NULL),
+			NULL
+		);
+		HWND hEdit_1 = CreateWindowEx
+		(
+			NULL,
+			"Edit",
+			"",
+			WS_CHILD | WS_VISIBLE | WS_BORDER,
+			10, 65,
+			500, 22,
+			hwnd,
+			(HMENU)1002,
+			GetModuleHandle(NULL),
+			NULL
+		);
+		HWND hButton = CreateWindowEx
+		(
+		NULL,
+			"Button",
+			"Применить",
+			WS_CHILD|WS_VISIBLE,//WS_CHILD = создаваемое окно явл дочерним элементом какого-то другого окна
+			430,90,
+			80,32,
+			hwnd,
+			(HMENU)1003,
+			GetModuleHandle(NULL),
+			NULL
+		);
+	}
 		break;
 	case WM_COMMAND:
+		switch (LOWORD(wParam))
+		{
+		case 1003:
+		{
+			MessageBox(hwnd, "Привет", "Привет", MB_OK | MB_ICONINFORMATION);
+			CONST INT SIZE = 256;
+			CHAR sz_buffer[SIZE] = {};
+			HWND hStatic = GetDlgItem(hwnd, 1000);
+			HWND hEdit = GetDlgItem(hwnd, 1001);
+
+			SendMessage(hEdit, WM_GETTEXT, SIZE, (LPARAM)sz_buffer);
+			SendMessage(hStatic, WM_SETTEXT, 0, (LPARAM)sz_buffer);
+			SendMessage(hwnd, WM_SETTEXT, 0, (LPARAM)sz_buffer);
+			SendMessage(GetDlgItem (hwnd,1002), WM_SETTEXT, 0, (LPARAM)sz_buffer);
+		}
+			break;
+		}
+
 		break;
 	case WM_DESTROY:
+		//MessageBox(NULL, " Или не закрой", "финита ля комедия", MB_OK | MB_ICONERROR);
 		PostQuitMessage(0);//прерывает цикл сообщений
+
 		break;
 	case WM_CLOSE:
+		if(MessageBox(hwnd,"Вы дейстительно хотите закрыть окно?","Серьезно?",MB_YESNO | MB_ICONQUESTION)== IDYES)
+			SendMessage(hwnd, WM_DESTROY,0,0),
 		DestroyWindow(hwnd);// оправляет сообщение - уничтожить окно
 		break;
 	default: return DefWindowProc(hwnd, uMsg, wParam, lParam);
