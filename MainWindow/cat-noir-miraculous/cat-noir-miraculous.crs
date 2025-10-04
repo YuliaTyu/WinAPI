@@ -1,0 +1,51 @@
+﻿[Arrow]
+Path=Cat Noir.ani
+
+[Hand]
+Path=Cat Noir Link.ani
+
+[Wait]
+Path=Cat Noir Busy.ani
+
+[SizeNESW]
+Path=Cat Noir Diagonal 1.ani
+
+[SizeNWSE]
+Path=Cat Noir Diagonal 2.ani
+
+[NWPen]
+Path=Cat Noir Handwriting.ani
+
+[Help]
+Path=Cat Noir Help.ani
+
+[SizeWE]
+Path=Cat Noir Horizontal.ani
+
+[Pin]
+Path=Cat Noir Location.ani
+
+[Person]
+Path=Cat Noir Person.ani
+
+[Crosshair]
+Path=Cat Noir Precision.ani
+
+[IBeam]
+Path=Cat Noir Text.ani
+
+[No]
+Path=Cat Noir Unavailable.ani
+
+[SizeNS]
+Path=Cat Noir Vertical.ani
+
+[AppStarting]
+Path=Cat Noir Working.ani
+
+[UpArrow]
+Path=Cat Noir Alternate.ani
+
+[SizeAll]
+Path=Cat Noir Move.ani
+
