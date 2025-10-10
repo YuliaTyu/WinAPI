@@ -1,5 +1,7 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include<Windows.h>
 #include"resource.h"
+#include<stdio.h>
 //имя окна 
 CONST CHAR g_sz_WND_CLASS_NAME[] = "My Window Class";
 
@@ -8,7 +10,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, INT nCmdShow)
 {
-	WNDCLASSEX wClass;//структура описывающая класс окна
+	//1 структура описывающая класс окна
+	WNDCLASSEX wClass;
 	ZeroMemory(&wClass, sizeof(wClass));
 
 	wClass.style = 0;
@@ -36,27 +39,40 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, IN
 	}
 
 	//Создание окна
-	HWND hwnd = CreateWindowExA
+	// Функция GetSystemMetrics (winuser.h) https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getsystemmetrics
+	//Системная метрика или параметр конфигурации, который необходимо получить. 
+	//Этот параметр может принимать одно из следующих значений. 
+	// Обратите внимание, что все значения SM_CX* — это ширина, а все значения SM_CY* — высота.
+	// Также обратите внимание, что все параметры, предназначенные для возврата логических данных, 
+	// представляют ИСТИНУ как любое ненулевое значение, а ЛОЖЬ — как нулевое значение
+	INT screen_width = GetSystemMetrics(SM_CXSCREEN);//ширина
+	INT screen_height = GetSystemMetrics(SM_CYSCREEN);//высота
+	
+	INT window_width = screen_width * .75;
+	INT window_height = screen_height * 2/ 3;
+	INT window_start_x = screen_width / 80;//координаты 
+	INT window_start_y = screen_height / 50;//координаты
+	HWND hwnd = CreateWindowEx
 	(
-		NULL,
-		g_sz_WND_CLASS_NAME,
-		g_sz_WND_CLASS_NAME,
+		//12 параметров при создании или описании окна 
+		NULL,	
+		g_sz_WND_CLASS_NAME,	
+		g_sz_WND_CLASS_NAME,	
 		WS_OVERLAPPEDWINDOW,
-		CW_USEDEFAULT,CW_USEDEFAULT,//позиция окна
-		CW_USEDEFAULT,CW_USEDEFAULT,//размер окна
-		NULL,//родиельское окно
+        window_start_x, window_start_y,	
+        window_width, window_height,
 		NULL,
-		hInstance,
-		NULL
-
-	);
+		NULL,	
+        hInstance,	
+        NULL
+);
 	if (hwnd == NULL)
 	{
-		MessageBox(NULL, "Window creation failed", "Error", MB_OK | MB_ICONERROR);
+		MessageBox(NULL, "Window creation failed", "", MB_OK | MB_ICONERROR);
 		return 0;
 	}
-	ShowWindow(hwnd, nCmdShow);
-	UpdateWindow(hwnd);
+	ShowWindow(hwnd, nCmdShow);	//Задает режим отображения окна: Развернуто на весь экран, Свернуто в окно, свернуто на панель задач
+	UpdateWindow(hwnd);	//Прорисовывает рабочую область окна
 
 	//Запуск цикла сообщений
 	MSG msg;
@@ -65,7 +81,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, IN
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
-
+	HWND_TOPMOST;
 	return msg.wParam;
 }
 LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -128,6 +144,35 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		);
 	}
 		break;
+
+	case WM_MOVE: //Сообщение WM_MOVE
+				  //Отправлено после перемещения окна.
+				  //Окно получает это сообщение через свою функцию WindowProc.
+		          //https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-move 
+	case WM_SIZE: //Сообщение WM_SIZE
+				  //Отправляется в окно после изменения его размера.
+				  //Окно получает это сообщение через свою функцию WindowProc.
+		          //https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-size
+	{
+		RECT window_rect;	//Функция GetWindowRect (winuser.h) https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getwindowrect
+		GetWindowRect(hwnd, &window_rect);//????????Функция DwmGetWindowAttribute (dwmapi.h)
+		INT window_width = window_rect.right - window_rect.left;//ширина
+		INT window_height = window_rect.bottom - window_rect.top;//высота
+		CONST INT SIZE = 256;
+		CHAR sz_home[SIZE] = {};
+		sprintf //Запись форматированных данных в строку
+			//https://learn.microsoft.com/ru-ru/cpp/c-runtime-library/reference/sprintf-sprintf-l-swprintf-swprintf-l-swprintf-l?view=msvc-170
+		(
+			sz_home,
+			"позиция  , размер  ",
+			g_sz_WND_CLASS_NAME,
+			window_rect.left, window_rect.top,
+			window_width, window_height
+		);
+		SendMessage(hwnd, WM_SETTEXT, 0, (LPARAM)sz_home);
+	}
+	break;
+
 	case WM_COMMAND:
 		switch (LOWORD(wParam))
 		{
