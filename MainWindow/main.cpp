@@ -50,8 +50,8 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, IN
 	
 	INT window_width = screen_width * .75;
 	INT window_height = screen_height * 2/ 3;
-	INT window_start_x = screen_width / 80;//координаты 
-	INT window_start_y = screen_height / 50;//координаты
+	INT window_start_x = screen_width / 8;//координаты 
+	INT window_start_y = screen_height / 8;//координаты
 	HWND hwnd = CreateWindowEx
 	(
 		//12 параметров при создании или описании окна 
@@ -59,8 +59,8 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, IN
 		g_sz_WND_CLASS_NAME,	
 		g_sz_WND_CLASS_NAME,	
 		WS_OVERLAPPEDWINDOW,
-        window_start_x, window_start_y,	
-        window_width, window_height,
+        window_start_x, window_start_y,	//позиция
+        window_width, window_height,    //размер 
 		NULL,
 		NULL,	
         hInstance,	
@@ -164,7 +164,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			//https://learn.microsoft.com/ru-ru/cpp/c-runtime-library/reference/sprintf-sprintf-l-swprintf-swprintf-l-swprintf-l?view=msvc-170
 		(
 			sz_home,
-			"позиция  , размер  ",
+			"%s позиция:%i*%i  , размер:%i*%i",
 			g_sz_WND_CLASS_NAME,
 			window_rect.left, window_rect.top,
 			window_width, window_height
