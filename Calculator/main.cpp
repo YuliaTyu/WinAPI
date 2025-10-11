@@ -3,7 +3,28 @@
 
 CONST CHAR g_sz_CLASS_NAME[] = "Calc_SPU_411";
 
+
+CONST INT g_i_BUTTON_SIZE = 50;//размер кнопки
+CONST INT g_i_INTERVAL = 2;//размер интервала между кнопками
+CONST INT g_i_BUTTIN_DOUBLE_SIZE = g_i_BUTTON_SIZE * 2 + g_i_INTERVAL;//двойная кнопка с интервалом
+
+CONST INT g_i_START_X = 10;//начальные координаты
+CONST INT g_i_START_Y = 10;
+CONST INT g_i_SCREEN_WIDTH = (g_i_BUTTON_SIZE + g_i_INTERVAL) * 5;//коичесвто колонок
+CONST INT g_i_SCREEN_HEIGHT = 25;
+
+CONST INT g_i_BUTTON_START_X = g_i_START_X; //выравнивание кнопок 
+CONST INT g_i_BUTTON_START_Y = g_i_START_Y + g_i_SCREEN_HEIGHT + g_i_INTERVAL;
+
+//массив с кнопками
+CONST CHAR g_OPERATIONS[] = "+-*/";
+CONST INT g_i_OPERATIONS_START_X = g_i_BUTTON_START_X + (g_i_BUTTON_SIZE + g_i_INTERVAL) * 3;//начало коррдинат операционных +-*/кнопок
+
 LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+//shift - количество кнопок
+#define BUTTON_SHIFT_X(shift) g_i_BUTTON_START_X + (g_i_BUTTON_SIZE + g_i_INTERVAL)*shift
+#define BUTTON_SHIFT_Y(shift) g_i_BUTTON_START_Y + (g_i_BUTTON_SIZE + g_i_INTERVAL)*shift
 
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, INT nCmdShow)
 {
@@ -17,7 +38,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, IN
 	wClass.cbClsExtra = 0;
 
 	wClass.hIcon = LoadIcon(hInstance,  MAKEINTRESOURCE( IDI_ICON1));//добавление иконки
-	wClass.hIconSm = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_BUTTON_0));//добавление иконки
+	wClass.hIconSm = LoadIcon(hInstance, MAKEINTRESOURCE(IDC_BUTTON_0));//добавление иконки
 	wClass.hCursor = LoadCursor(NULL,IDC_ARROW);
 	wClass.hbrBackground = (HBRUSH)COLOR_WINDOW;
 
@@ -64,13 +85,132 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, IN
 
 	return msg.wParam;
 }
+
 LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg)
 	{
 	case WM_CREATE:
+	{
+		HWND hEdit = CreateWindowEx
+		(
+			NULL,
+			"Edit",
+			"",
+			WS_CHILD | WS_VISIBLE | WS_BORDER,
+			10, 10,
+			500, 25,
+			hwnd,
+			(HMENU)IDC_EDIT,
+			GetModuleHandle(NULL),
+			NULL
+		);
+		//создание кнопок от 1 до 9
+		INT digit = 1;
+		CHAR sz_digit[2] = "";
+
+		for (int i = 6; i >= 0; i -= 3)
+		{
+			for (int j = 0; j < 3; j++)
+			{
+				sz_digit[0] = digit++ + '0';
+				CreateWindowEx
+				(
+					NULL, "BUTTON", sz_digit,
+					WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+					g_i_BUTTON_START_X + (g_i_BUTTON_SIZE + g_i_INTERVAL) * j,
+					g_i_BUTTON_START_Y + (g_i_BUTTON_SIZE + g_i_INTERVAL) * i/3,
+					g_i_BUTTON_SIZE, g_i_BUTTON_SIZE,
+					hwnd,
+					(HMENU)(IDC_BUTTON_0 + digit),
+					GetModuleHandle(NULL),
+					NULL
+				);
+			}
+		}
+		//создание 0
+		CreateWindowEx 
+		(
+			NULL, "BUTTON", "0",
+			WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+			g_i_BUTTON_START_X, g_i_BUTTON_START_Y + (g_i_BUTTON_SIZE + g_i_INTERVAL) * 3,
+			g_i_BUTTIN_DOUBLE_SIZE, g_i_BUTTON_SIZE,
+			hwnd,
+			(HMENU)IDC_BUTTON_0,
+			GetModuleHandle(NULL),
+			NULL
+		);
+		//создание точки
+		CreateWindowEx
+		(
+			NULL, "BUTTON", ".",
+			WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+			g_i_BUTTON_START_X + g_i_BUTTIN_DOUBLE_SIZE + g_i_INTERVAL,
+			g_i_BUTTON_START_Y +(g_i_BUTTON_SIZE+ g_i_INTERVAL)*3,
+			g_i_BUTTON_SIZE, g_i_BUTTON_SIZE,
+			hwnd,
+			(HMENU)IDC_BUTTON_POINT,
+			GetModuleHandle(NULL),
+			NULL
+		);
+		//создание кнопок операторов
+		CHAR operation[2] = "";
+		for (int i = 0; i < 4; i++)
+		{
+			operation[0] = g_OPERATIONS[i];
+			CreateWindowEx
+			(
+				NULL, "BUTTON", operation,
+				WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+				g_i_OPERATIONS_START_X,
+				g_i_BUTTON_START_Y + (g_i_BUTTON_SIZE + g_i_INTERVAL) * (3 - i),
+				g_i_BUTTON_SIZE, g_i_BUTTON_SIZE,
+				hwnd,
+				(HMENU)(IDC_BUTTON_PLUS + i),
+				GetModuleHandle(NULL),
+				NULL
+			);
+		}
+		CreateWindowEx
+		(
+			NULL, "BUTTON", "<-",
+			WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+			BUTTON_SHIFT_X(4), BUTTON_SHIFT_Y(0),
+			g_i_BUTTON_SIZE, g_i_BUTTON_SIZE,
+			hwnd,
+			(HMENU)IDC_BUTTON_BSP,
+			GetModuleHandle(NULL),
+			NULL
+		);
+		//C
+		CreateWindowEx
+		(
+			NULL, "BUTTON", "C",
+			WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+			BUTTON_SHIFT_X(4), BUTTON_SHIFT_Y(1),
+			g_i_BUTTON_SIZE, g_i_BUTTON_SIZE,
+			hwnd,
+			(HMENU)IDC_BUTTON_CLR,
+			GetModuleHandle(NULL),
+			NULL
+		);
+		//=
+		CreateWindowEx
+		(
+			NULL, "BUTTON", "=",
+			WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+			BUTTON_SHIFT_X(4), BUTTON_SHIFT_Y(2),
+			g_i_BUTTON_SIZE, g_i_BUTTIN_DOUBLE_SIZE,
+			hwnd,
+			(HMENU)IDC_BUTTON_EQUAL,
+			GetModuleHandle(NULL),
+			NULL
+		);
+	}
+
 	break;
 	case WM_COMMAND:
+
     break;
 	case WM_DESTROY:
 		PostQuitMessage(0);
