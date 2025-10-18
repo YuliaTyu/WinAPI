@@ -6,7 +6,6 @@
 
 CONST CHAR g_sz_CLASS_NAME[] = "Calc_SPU_411";
 
-
 CONST INT g_i_BUTTON_SIZE = 80;//размер кнопки
 CONST INT g_i_INTERVAL = 2;//размер интервала между кнопками
 CONST INT g_i_BUTTIN_DOUBLE_SIZE = g_i_BUTTON_SIZE * 2 + g_i_INTERVAL;//двойная кнопка с интервалом
@@ -18,7 +17,6 @@ CONST INT g_i_SCREEN_HEIGHT = g_i_BUTTON_SIZE;
 
 CONST INT g_i_BUTTON_START_X = g_i_START_X; //выравнивание кнопок 
 CONST INT g_i_BUTTON_START_Y = g_i_START_Y + g_i_SCREEN_HEIGHT + g_i_INTERVAL*4;
-
 
 //массив с кнопками
 CONST CHAR g_OPERATIONS[] = "+-*/";
@@ -87,7 +85,6 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, IN
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
-
 	return msg.wParam;
 }
 
@@ -226,7 +223,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	break;
 	case WM_COMMAND:
 	{
-		
 		CONST INT SIZE = 256;
 		CHAR sz_display[SIZE] = {};
 		CHAR sz_digit[2] = {};
@@ -234,11 +230,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		SendMessage(hEdit, WM_GETTEXT, SIZE, (LPARAM)sz_display);
 		if (LOWORD(wParam) >= IDC_BUTTON_0 && LOWORD(wParam) <= IDC_BUTTON_9)//показывает цифры в экране
 		{
-			if (operation_input)
-			{ 
-				sz_display[0] = 0;
-				operation_input = FALSE;
-			}
+			if (operation_input)sz_display[0] = 0;
 			sz_digit[0] = LOWORD(wParam) - IDC_BUTTON_0 + 48; //ASCII 0 - 48 ПОЭТОМУ ДЛЯ ПЕРЕХОДА А ДРУГУЮ ЦИФРУ +48
 			if (strcmp(sz_display, "0"))
 				strcat(sz_display, sz_digit);
@@ -246,6 +238,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				strcpy(sz_display, sz_digit);
 			SendMessage(hEdit, WM_SETTEXT, 0, (LPARAM)sz_display);
 			input = TRUE;
+			operation_input = FALSE;
 		}
 		if (LOWORD(wParam) == IDC_BUTTON_POINT)
 		{
@@ -271,10 +264,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		//обработка операций
 		if (LOWORD(wParam) >= IDC_BUTTON_PLUS && LOWORD(wParam) <= IDC_BUTTON_SLASH)
 		{
-			if (input && a == DBL_MIN)a = atof(sz_display);
-			input = FALSE;
-			if (operation && input)
+			if (input)
+				(a == DBL_MIN ? a:b) = atof(sz_display);
+			if (input)
 				SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_EQUAL), 0);
+			input = FALSE;
 			operation = LOWORD(wParam);
 			operation_input = TRUE;
 		}
@@ -289,14 +283,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			case IDC_BUTTON_ASTER:	a *= b;	break;
 			case IDC_BUTTON_SLASH:	a /= b;	break;
 			}
-			operation = 0;
 			operation_input = FALSE;
 			sprintf(sz_display, "%g", a);
 			SendMessage(hEdit, WM_SETTEXT, 0, (LPARAM)sz_display);
 		}
 	}
-
-    break;
+	break;
 	case WM_DESTROY:
 		PostQuitMessage(0);
 	break;
