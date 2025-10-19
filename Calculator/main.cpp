@@ -39,7 +39,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, IN
 	wClass.cbWndExtra = 0;
 	wClass.cbClsExtra = 0;
 
-	wClass.hIcon = LoadIcon(hInstance,  MAKEINTRESOURCE( IDI_ICON1));//добавление иконки
+	wClass.hIcon = LoadIcon(hInstance,  MAKEINTRESOURCE(IDI_ICON1));//добавление иконки
 	wClass.hIconSm = LoadIcon(hInstance, MAKEINTRESOURCE(IDC_BUTTON_0));//добавление иконки
 	wClass.hCursor = LoadCursor(NULL,IDC_ARROW);
 	wClass.hbrBackground = (HBRUSH)COLOR_WINDOW;
@@ -141,7 +141,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		CreateWindowEx 
 		(
 			NULL, "BUTTON", "0",
-			WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+			WS_CHILD | WS_VISIBLE | BS_BITMAP,//СТИЛЬ!!BS_BITMAP
+			//Указывает на то, что на кнопке отображается растровое изображение.
+			// во взаимодействии с BS_ICON .
+			//https://learn.microsoft.com/en-us/windows/win32/controls/button-styles
 			g_i_BUTTON_START_X, //g_i_BUTTON_START_Y + (g_i_BUTTON_SIZE + g_i_INTERVAL) * 3,
 			BUTTON_SHIFT_Y(3),
 			g_i_BUTTIN_DOUBLE_SIZE, g_i_BUTTON_SIZE,
@@ -150,6 +153,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			GetModuleHandle(NULL),
 			NULL
 		);
+					
 		//создание точки
 		CreateWindowEx
 		(
