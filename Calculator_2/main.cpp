@@ -354,6 +354,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			SendMessage(GetDlgItem(hwnd, wParam - '0' + IDC_BUTTON_0), BM_SETSTATE, FALSE, 0);
 		}
 		else if (wParam >= 0x60 && wParam <= 0x69)
+			//что числа от 60 до 69 в контексте нумерологии могут означать этапы перехода сознания 
+			// от примитивного, почти животного уровня, 
+			// до состояния готовности к духовному восхождению.!!!!!!))))) 
+
 		{
 			SendMessage(hwnd, WM_COMMAND, LOWORD(wParam - 0x60 + IDC_BUTTON_0), 0);
 			SendMessage(GetDlgItem(hwnd, wParam - 0x60 + IDC_BUTTON_0), BM_SETSTATE, FALSE, 0);
