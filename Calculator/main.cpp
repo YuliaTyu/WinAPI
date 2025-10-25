@@ -141,7 +141,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		CreateWindowEx 
 		(
 			NULL, "BUTTON", "0",
-			WS_CHILD | WS_VISIBLE | BS_BITMAP,//СТИЛЬ!!BS_BITMAP
+			WS_CHILD | WS_VISIBLE | BS_BITMAP, //|BS_BITMAP
 			//Указывает на то, что на кнопке отображается растровое изображение.
 			// во взаимодействии с BS_ICON .
 			//https://learn.microsoft.com/en-us/windows/win32/controls/button-styles
